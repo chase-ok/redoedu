@@ -3,6 +3,9 @@
  * Module dependencies.
  */
 
+var db = require('./data/db');
+db.connect();
+
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
@@ -31,6 +34,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/users/test', user.test);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
