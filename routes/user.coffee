@@ -1,8 +1,9 @@
 
-{User} = require './data/user'
+{User} = require '../data/user'
 
 exports.list = (req, res) ->
     res.send "respond with a resource"
+
 
 exports.test = (req, res) ->
     testing = new User
