@@ -1,5 +1,15 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	.container
+		.jumbotron
+			h1 What Matters Most SCOPE
+			p
+			| Bacon ipsum dolor sit amet drumstick short loin leberkas boudin t-bone hamburger jerky tri-tip. Tenderloin swine sirloin filet mignon andouille boudin beef jowl cow salami.
+			br
+			br
+			form.form-inline(role='form')
+				.form-group
+					input#email.form-control(type='email', placeholder='Enter email')
+					button.btn.btn-small.btn-success(type='submit') Learn More
+
