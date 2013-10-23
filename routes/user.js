@@ -44,12 +44,9 @@ checkLocation = optional(null, function(req) {
 
 postEmail = function(req, res) {
   var email, err, user, _ref2, _ref3;
-  console.log(req.body);
-  console.log(req.body.email);
   _ref2 = checkAll(req, res, {
     email: checkEmail
   }), err = _ref2[0], (_ref3 = _ref2[1], email = _ref3.email);
-  console.log([err, email]);
   if (err) {
     return;
   }
@@ -61,7 +58,8 @@ postEmail = function(req, res) {
       return fail(res, err);
     } else {
       return res.render('success', {
-        title: 'What Matters Most'
+        title: 'What Matters Most',
+        root: './public'
       });
     }
   });

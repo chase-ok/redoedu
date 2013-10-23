@@ -31,11 +31,8 @@ checkLocation = optional null, (req) ->
 
 
 postEmail = (req, res) ->
-    console.log req.body
-    console.log req.body.email
     [err, {email}] = checkAll req, res,
         email: checkEmail
-    console.log [err, email]
     return if err
     
     user = new User
@@ -46,6 +43,7 @@ postEmail = (req, res) ->
             #succeed res, {user}
             res.render 'success',
                 title: 'What Matters Most'
+                root: '../../public'
 
 
 putUser = (req, res) ->
