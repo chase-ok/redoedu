@@ -80,3 +80,7 @@ body {
     font-family: 'Istok Web', sans-serif;
   }
 }
+
+#tweet-widget {
+  text-align: center
+}

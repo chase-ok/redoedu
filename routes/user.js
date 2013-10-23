@@ -59,7 +59,7 @@ postEmail = function(req, res) {
     } else {
       return res.render('success', {
         title: 'What Matters Most',
-        root: './public'
+        root: '../../public'
       });
     }
   });
