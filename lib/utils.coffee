@@ -1,4 +1,12 @@
 
+exports.fail = (res, error) ->
+    res.json
+        success: false
+        error: error
+
+exports.succeed = (res, resultObj={}) ->
+    resultObj.success = true
+    res.json resultObj
 
 exports.optional = (defaultValue, fun) ->
     (req, res) ->
@@ -9,9 +17,7 @@ exports.doCheck = (req, res, fun) ->
     try 
         [false, fun(req, res)]
     catch e
-        res.json
-            success: false
-            error: e.message
+        exports.fail res, e.message
         [true, null]
 
 exports.checkAll = (req, res, fields) ->

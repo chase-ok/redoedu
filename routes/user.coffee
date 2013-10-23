@@ -1,7 +1,7 @@
 
 {User, userCategories} = require '../data/user'
 {check} = require 'validator'
-{checkAll, optional} = require '../lib/utils'
+{checkAll, optional, fail, succeed} = require '../lib/utils'
 
 
 checkEmail = (req) ->
@@ -30,7 +30,9 @@ checkLocation = optional null, (req) ->
     req.body.location
 
 
-putEmail = (req, res) ->
+postEmail = (req, res) ->
+    console.log req.body
+    console.log req.body.email
     [err, {email}] = checkAll req, res,
         email: checkEmail
     console.log [err, email]
@@ -38,8 +40,12 @@ putEmail = (req, res) ->
     
     user = new User
         email: email
-    user.save (err) -> console.log "Couldn't save user: #{err}" if err
-    res.json {success: true}
+    user.save (err) -> 
+        if err then fail res, err
+        else 
+            #succeed res, {user}
+            res.render 'success',
+                title: 'What Matters Most'
 
 
 putUser = (req, res) ->
@@ -52,23 +58,26 @@ putUser = (req, res) ->
     return if err
 
     user = new User fields
-    user.save (err) -> console.log "Couldn't save user: #{err}" if err
+    user.save (err) -> 
+        if err then fail res, err
+        else succeed res, {user}
 
-    res.json {success: true}
+getUser = (req, res) ->
+    console.log req.params.id
+    User.findOne {_id: req.params.id}, (err, user) ->
+        if err then fail res, err
+        else succeed res, {user}
 
 
 listEmails = (req, res) ->
     User.find {}, (err, users) ->
-        if err 
-            res.json
-                success: false
-                error: "" + err
-        else 
-            res.json
-                success: true
-                emails: user.email for user in users
+        if err then fail res, err
+        else succeed res, 
+            emails: user.email for user in users
+
 
 exports.create = (app) ->
-    app.put '/user/email', putEmail
+    app.post '/user/email', postEmail
     app.put '/user', putUser
+    app.get '/user/:id', getUser
     app.get '/user/email/all', listEmails
