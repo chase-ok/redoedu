@@ -1,35 +1,61 @@
 
-{User} = require '../data/user'
+{User, userCategories} = require '../data/user'
 {check} = require 'validator'
+{checkAll, optional} = require '../lib/utils'
 
 
-test = (req, res) ->
-    testing = new User
-        name: "Some Guy"
-        email: "some.guy@gmail.com"
-        joinDate: Date.now()
-        age: 22
-        category: "Student"
-        location: "Needham, MA"
-    testing.save (err) ->
-        console.log err if err
+checkEmail = (req) ->
+    check(req.body.email).len(6, 64).isEmail()
+    req.body.email
 
-    res.send "Hey there"
+checkName = (req) ->
+    check(req.body.name).len(3, 64)
+    req.body.name
+
+checkAge = optional null, (req) ->
+    check(req.body.age).isInt()
+    req.body.name|0
+
+checkCategory = (req) ->
+    category = req.body.category
+    try 
+        check(category).isAlpha()
+        if category not in userCategories
+            throw "Not a recognized category: #{category}"
+    catch e
+        userCategories[0]
+
+checkLocation = optional null, (req) ->
+    check(req.body.location).len(2, 128)
+    req.body.location
+
 
 putEmail = (req, res) ->
-    email = req.body.email
-    try check(email).len(6, 64).isEmail()
-    catch e
-        res.json
-            success: false
-            error: e.message
-        return
+    [err, {email}] = checkAll req, res,
+        email: checkEmail
+    console.log [err, email]
+    return if err
     
     user = new User
         email: email
     user.save (err) -> console.log "Couldn't save user: #{err}" if err
-    res.json
-        success: true
+    res.json {success: true}
+
+
+putUser = (req, res) ->
+    [err, fields] = checkAll req, res,
+        email: checkEmail
+        name: checkName
+        age: checkAge
+        category: checkCategory
+        location: checkLocation
+    return if err
+
+    user = new User fields
+    user.save (err) -> console.log "Couldn't save user: #{err}" if err
+
+    res.json {success: true}
+
 
 listEmails = (req, res) ->
     User.find {}, (err, users) ->
@@ -44,5 +70,5 @@ listEmails = (req, res) ->
 
 exports.create = (app) ->
     app.put '/user/email', putEmail
+    app.put '/user', putUser
     app.get '/user/email/all', listEmails
-    app.get '/user/test', test
