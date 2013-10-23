@@ -10,7 +10,9 @@ exports.userCategories = ["General"
 exports.userSchema = new mongoose.Schema
     name: String
     email: String
-    joinDate: Date
+    joinDate: 
+        type: Date
+        default: Date.now
     age: 
         type: Number
         default: -1
