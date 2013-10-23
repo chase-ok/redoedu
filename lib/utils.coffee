@@ -1,4 +1,6 @@
 
+{check: exports.check} = require 'validator'
+
 exports.fail = (res, error) ->
     res.json
         success: false

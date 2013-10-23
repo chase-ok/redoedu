@@ -1,7 +1,6 @@
 
 {User, userCategories} = require '../data/user'
-{check} = require 'validator'
-{checkAll, optional, fail, succeed} = require '../lib/utils'
+{check, checkAll, optional, fail, succeed} = require '../lib/utils'
 
 
 checkEmail = (req) ->
@@ -12,9 +11,9 @@ checkName = (req) ->
     check(req.body.name).len(3, 64)
     req.body.name
 
-checkAge = optional null, (req) ->
+checkAge = optional -1, (req) ->
     check(req.body.age).isInt()
-    req.body.name|0
+    req.body.age|0
 
 checkCategory = (req) ->
     category = req.body.category
