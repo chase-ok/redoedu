@@ -44,7 +44,7 @@ body {
 
 /* Main marketing message and sign up button */
 .jumbotron {
-  text-align: center;
+  text-align: left;
   border-bottom: 1px solid #e5e5e5;
   background-image: url('../images/chalkboard.jpg');
   color: white;
