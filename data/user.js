@@ -1,7 +1,9 @@
 
-var mongoose = require('mongoose');
+var mongoose = require('mongoose')
+  , _ = require('underscore');
 
 exports.userCategories = ["General", "Student", "Parent", "Educator", "Admin"];
+exports.storyTypes = ['Tweet', 'YouTube'];
 
 exports.userSchema = new mongoose.Schema({
     name: String,
@@ -18,7 +20,16 @@ exports.userSchema = new mongoose.Schema({
     location: {
         type: String,
         "default": ""
-    }
+    },
+    storyType: String,
+    numYoutubeStories: {
+        type: Number,
+        "default": 0,
+    },
 });
+
+exports.userSchema.methods.registerSharedBy = function(user, cb) {
+    _
+};
 
 exports.User = mongoose.model('User', exports.userSchema);

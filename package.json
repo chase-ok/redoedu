@@ -10,6 +10,7 @@
     "jade": "*",
     "mongodb": "1.1.11",
     "mongoose": "3.x",
-    "validator": "~1.5.1"
+    "validator": "~1.5.1",
+    "underscore": "~1.5.2"
   }
 }
