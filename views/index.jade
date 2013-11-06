@@ -2,26 +2,11 @@ extends layout
 
 block content
 	.container
-		#intro
-			h1 
-				center
-					| redoEdu
+		.jumbotron
+			h1 redoEdu
+			p
+				| Reinventing US education for the modern world is a massive undertaking; awareness of the issues at hand and the path forward is not enough. Change will only come through a dedicated movement composed of key stakeholders and concerned citizens.
 			br
-			.row
-				input(type='hidden', name='youtubeurl', id='youtubeurl', value='http://www.youtube.com/embed/H-oj5MIyb64?list=UUgfK5EqE5sD2odn_5rwU4VQ')
-				#youtubeframe.col-md-6
-					Render please...
-				#promptframe.col-md-6
-					| Reinventing US education for the modern world is a massive undertaking; awareness of the issues at hand and the path forward is not enough. Change will only come through a dedicated movement composed of key stakeholders and concerned citizens.
-					center
-						br
-						form.form-horizontal()
-							input#inputSmall.form-control(type='text', placeholder='Enter your name')
-							input#inputSmall.form-control(type='email', placeholder='Enter your email')
-							input#inputSmall.form-control(type='text', placeholder='Enter your zipcode')
-							button.btn.btn-default(type='submit') Submit
-			br
-			br
-			center
-				form.form-inline(role="form", action="" method="post", id='story', name='story')
-					button.btn.btn-lg.btn-success(type='button', name='story-button', id='story-button') Tell us about your school experience
+			form.form-inline(role="form", action="" method="post", id='story', name='story')
+				button.btn.btn-lg.btn-success(type='submit', name='email-button', id='email-button') Click here to tell us your story
+

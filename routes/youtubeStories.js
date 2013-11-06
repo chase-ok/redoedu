@@ -1,30 +1,18 @@
 
-var User = require('../data/user').User
-  , YoutubeStory = require('../data/youtubeStory').YoutubeStory
+var User = require('../data/users').User
+  , YoutubeStory = require('../data/youtubeStories').YoutubeStory
   , utils = require('../lib/utils')
-  , session = require('../lib/session')
-  , _ = require('underscore');
+  , sessions = require('../lib/sessions')
+  , _ = require('underscore')
+  , makeRequest = require('request');
 
 var youtubeIdRegEx = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+var youtubeVideoApiUrl = "http://gdata.youtube.com/feeds/api/videos/";
 
 function checkYoutubeId(req) {
     var match = youtubeIdRegEx.exec(req.body.youtubeUrl);
     if (match == null) throw "Not a valid YouTube url";
     return match[1];
-}
-
-function checkTitle(req) {
-    if (req.body.title) {
-        utils.check(req.body.title).len(1, 256);
-        return req.body.title;
-    } else return "";
-}
-
-function checkDescription(req) {
-    if (req.body.description) {
-        utils.check(req.body.description).len(0, 1024*4);
-        return req.body.description;
-    } else return "";
 }
 
 function checkTags(req) {
@@ -43,8 +31,6 @@ function getIndex(req, res) {
 function putStory(req, res) {
     var check = utils.checkAll(req, res, {
         youtubeId: checkYoutubeId,
-        title: checkTitle,
-        description: checkDescription,
         tags: checkTags
     });
     if (check[0]) return;
@@ -54,18 +40,31 @@ function putStory(req, res) {
             message: "A story already exists with this YouTube video."
         });
 
-        var story = new YoutubeStory({
-            youtubeId: check[1].youtubeId,
-            title: check[1].title,
-            description: check[1].description,
-            tags: check[1].tags,
-            created: Date.now(),
-            lastViewed: Date.now(),
-        });
+        makeRequest({ 
+            uri: youtubeVideoApiUrl + check[1].youtubeId,
+            qs: {v: '2', alt: 'jsonc'}
+        }, function (err, response, body) {
+            if (err) return utils.fail(res, err);
 
-        session.getCurrentUser(req, function(err, user) {
-            if (user) story.user = user;
-            story.save(function(err) {
+            var json = JSON.parse(body);
+            if (json.error) return utils.fail(res, json.error.message);
+            var data = json.data;
+
+            var story = new YoutubeStory({
+                youtubeId: check[1].youtubeId,
+                title: data.title,
+                description: data.description,
+                created: Date.parse(data.uploaded),
+                added: Date.now(),
+                tags: check[1].tags,
+                thumbnail: {
+                    standard: data.thumbnail.sqDefault,
+                    highQuality: data.thumbnail.hqDefault
+                }
+            });
+            console.log(data);
+            if (req.user) story.user = req.user;
+            story.save(function (err) {
                 if (err) utils.fail(res, err);
                 else utils.succeed(res, {story: story});
             });
@@ -113,8 +112,8 @@ function putShareStory(req, res) {
             else story.sharesByNonUser += 1;
 
             //TODO: way to not hardlink this?
-            var link = "http://www.redoedu.org/story/youtube/share/";
-            link += story._id;
+            var link = req.protocol + "://" + req.get('host');
+            link += "/story/youtube/share/" + story._id;
             if (user) link += "?user=" + user._id;
 
             utils.succeed(res, {link: link});
@@ -155,13 +154,14 @@ function putLinkUserToStory(req, res) {
             message: "This story has already been linked to a user."
         });
 
-        session.getCurrentUser(function(err, user) {
-            if (err) return utils.fail(res, err);
-            story.user = user;
-            story.save(function(err) {
-                if (err) utils.fail(res, err);
-                else utils.succeed(res, {});
-            });
+        if (!req.user) return utils.fail(res, {
+            message: "You need to be logged in to associate with this story."
+        });
+
+        story.user = req.user;
+        story.save(function(err) {
+            if (err) utils.fail(res, err);
+            else utils.succeed(res, {});
         });
     });
 }

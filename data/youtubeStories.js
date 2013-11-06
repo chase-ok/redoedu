@@ -7,10 +7,14 @@ var counter = {type: Number, default: 0};
 exports.youtubeStorySchema = new mongoose.Schema({
     youtubeId: String,
     created: Date,
+    added: Date,
     title: {type: String, default: ""},
     description: {type: String, default: ""},
     tags: [String],
-    lastViewed: Date,
+    thumbnail: {
+        standard: String,
+        highQuality: String
+    },
     views: {
         type: Number,
         default: 0,
