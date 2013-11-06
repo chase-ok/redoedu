@@ -169,6 +169,16 @@ function putLinkUserToStory(req, res) {
     });
 }
 
+function viewStory(req, res) {
+    YoutubeStory.findById(req.params.storyId, function(err, story) {
+        if (err) utils.fail(res, err);
+        else res.render("youtube/view", {
+            story: story
+            user: req.user
+        });
+    });
+}
+
 exports.create = function(app) {
     app.get('/story/youtube', getIndex);
     app.put('/story/youtube/viewed', putStoryViewed);
@@ -176,6 +186,7 @@ exports.create = function(app) {
     app.put('/story/youtube/share', putShareStory);
     app.get('/story/youtube/share/:storyId', getShareStory);
     app.put('/story/youtube/link-user-to-story/:storyId', putLinkUserToStory);
+    app.get('/story/youtube/view/:storyId', viewStory);
     app.get('/story/youtube/story/:storyId', getStory);
     app.put('/story/youtube/story', putStory);
 };
