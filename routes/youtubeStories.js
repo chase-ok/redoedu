@@ -25,7 +25,10 @@ function checkTags(req) {
 }
 
 function getIndex(req, res) {
-    res.render('webcam');
+    res.render('youtube/index', {
+        user: req.user,
+
+    });
 }
 
 function putStory(req, res) {
@@ -99,12 +102,7 @@ function getPopularStories(req, res) {
                 .limit(limit)
                 .exec(function (err, stories) {
         if (err) utils.fail(res, err);
-        else {
-            res.render("youtube/popular", {
-                stories: stories,
-                user: req.user
-            });
-        }
+        else utils.succeed(res, {stories: stories});
     });
 }
 
