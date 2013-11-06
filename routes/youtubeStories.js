@@ -99,7 +99,12 @@ function getPopularStories(req, res) {
                 .limit(limit)
                 .exec(function (err, stories) {
         if (err) utils.fail(res, err);
-        else utils.succeed(res, {stories: stories});
+        else {
+            res.render("youtube/popular", {
+                stories: stories,
+                user: req.user
+            });
+        }
     });
 }
 

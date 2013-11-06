@@ -164,7 +164,7 @@ function putLocalUser(req, res) {
 }
 
 function postLocalLogin(req, res) {
-    utils.succeed(res);
+    utils.succeed(res, {user: req.user});
 }
 
 function putLocalLogout(req, res) {
